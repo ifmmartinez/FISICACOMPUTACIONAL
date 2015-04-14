@@ -1,12 +1,13 @@
 module Intervalos
   using Base
 
+  import Base.exp, Base.log, Base.sin, Base.cos, Base.tan
   importall Base.Operators
 
   export Interval
 
 
-  immutable Interval #DEFINICIÓN DE INTERVALO
+  type Interval #DEFINICIÓN DE INTERVALO
         left::Float64
         right::Float64
 
@@ -65,6 +66,13 @@ module Intervalos
         Interval(r, l)
   end
 
+  function +(n::Real, x::Interval)
+        l = Redondeo(+, RoundDown, x.left, n)
+        r = Redondeo(+, RoundUp, x.right, n)
+        Interval(r, l)
+  end
+
+
 
 
   function -(x::Interval, y::Interval) #Resta de intervalos
@@ -99,6 +107,17 @@ module Intervalos
         end
   end
 
+  function /(n::Float64, y::Interval)
+   m=Interval(0.0, 0.0)
+    with_rounding(RoundDown) do
+      m.left=n
+    end
+    with_rounding(RoundDown) do
+      m.right=n
+    end
+  return m/y
+  end
+
   function contains(x::Interval, n::Real)
     if n>=x.left && x.right>=n
       true
@@ -121,9 +140,97 @@ module Intervalos
     end
   end
 
+  function sin(x::Interval)
+    y=Interval(0.0,0.0)
+    if sin(x.left)<sin(x.right)
+      with_rounding(RoundDown) do
+        y.left=sin(x.left)
+      end
+      with_rounding(RoundUp) do
+        y.right=sin(x.right)
+      end
+    else
+      with_rounding(RoundUp) do
+        y.right=sin(x.left)
+      end
+      with_rounding(RoundDown) do
+        y.left=sin(x.right)
+      end
+    end
+    return y
+  end
+
+  function cos(x::Interval)
+    y=Interval(0.0,0.0)
+    if cos(x.left)<cos(x.right)
+      with_rounding(RoundDown) do
+        y.left=cos(x.left)
+      end
+      with_rounding(RoundUp) do
+        y.right=cos(x.right)
+      end
+    else
+      with_rounding(RoundUp) do
+        y.right=cos(x.left)
+      end
+      with_rounding(RoundDown) do
+        y.left=cos(x.right)
+      end
+    end
+  return y
+  end
+
+  function tan(x::Interval)
+    y=Interval(0.0,0.0)
+    if tan(x.left)<tan(x.right)
+      with_rounding(RoundDown) do
+        y.left=tan(x.left)
+      end
+      with_rounding(RoundUp) do
+        y.right=tan(x.right)
+      end
+    else
+      with_rounding(RoundUp) do
+        y.right=tan(x.left)
+      end
+      with_rounding(RoundDown) do
+        y.left=tan(x.right)
+      end
+    end
+  return y
+  end
+
+
+  function exp(x::Interval)
+    y=Interval(0.0, 0.0)
+      with_rounding(RoundUp) do
+      y.right=exp(x.right)
+      end
+      with_rounding(RoundDown) do
+      y.left=exp(x.left)
+      end
+  return y
+  end
+
+  function log(x::Interval)
+    y=Interval(0.0, 0.0)
+        with_rounding(RoundUp) do
+        y.right=log(x.right)
+        end
+        with_rounding(RoundDown) do
+        y.left=log(x.left)
+        end
+    return y
+  end
+
+  function ==(x::Interval, y::Interval)
+    if x.right==y.right && x.left==y.left
+      true
+    else
+      false
+    end
+  end
+
 
 end
-
-
-
 
