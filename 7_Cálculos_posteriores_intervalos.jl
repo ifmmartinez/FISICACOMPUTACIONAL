@@ -47,20 +47,17 @@ Interval(-1.0,1.0)*Interval(-1.0,0.0)+Interval(-1.0,1.0)*Interval(3.0,4.0)
 P_1(x)=(x-1.0)(x-2.0)
 P_2(x)=x^2-2.0
 
-function EjeY(x::Interval)# Valores de el polinomio desde x.left hasta x.right en saltos de 0.125 (2^-3)
-  RangInterval=Float64[]
-  for i in x.left:0.125:x.right
-    push!(RangInterval, P_1(i))
-  end
-end
+x_interval = Interval(1.0, 2.0)
+x = linspace(x_interval.left, x_interval.right, 50);
+y = [i^2 - 3*i + 2 for i in x] #por alguna razón que desconozco al poner P_1(x) me daba error, asi que lo desarrollé
 
-function EjeX(x::Interval)
-  RangInterval=Float64[]
-  for i in DomInterval.left:0.125:DomInterval.right
-    push!(RangInterval, i)
-  end
-end
+plot(x,y)
+
+x_interval = Interval(-2.0,2.0)
+x = linspace(x_interval.left, x_interval.right, 50);
+y = [P_2(i) for i in x]
+
+plot(x,y)
 
 
-plot(EjeX, EjeY)
 
