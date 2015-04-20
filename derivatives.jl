@@ -1,48 +1,73 @@
-module NumericDerivatives
+module DerivadasNumericas
+
+
   using Base
   import Base.exp, Base.log, Base.sin, Base.cos, Base.tan
   importall Base.Operators
 
-  export ValorDeriv
+  export NumDerive
 
-  type ValorDeriv
+  type NumDerive
     f
     d
+    function NumDerive(f)
+      NumDerive(f, 1)
+    end
   end
 
-  function  +(u::ValorDeriv, v::ValorDeriv)
-      ValorDeriv(u.f+v.d, u.f+v.d)
-    end
+  function +(u::NumDerive, v::NumDerive)
+    NumDerive(u.f + v.f, u.d + v.d)
+  end
 
-  -(u::ValorDeriv, v::ValorDeriv) = ValorDeriv(u.val-v.val, u.der-v.der)
+  function -(u::NumDerive, v::NumDerive)
+    NumDerive(u.f - v.f, u.d - v.d)
+  end
 
-  *(n::Number, u::ValorDeriv) = ValorDeriv(n*u.val, n*u.der)
-  *(u::ValorDeriv, v::ValorDeriv) = ValorDeriv(u.val*v.val, u.val*v.der + v.val*u.der)
+  function +(u::NumDerive, n::Number)
+    NumDerive(u.f + n, u.d)
+  end
+
+  function -(u::NumDerive, n::Number)
+    NumDerive(u.f - n, u.d)
+  end
+
+  function *(u::NumDerive, v::NumDerive)
+    NumDerive(u.f*v.f, u.f*v.d + u.d*v.f)
+  end
+
+  function *(n::Number, u::NumDerive)
+    NumDerive(n*u.f, n*u.d)
+  end
+
+  function /(u::NumDerive, v::NumDerive)
+    NumDerive(u.f/v.f, (u.d*v.f - v.d*u.f)/(v.f^2))
+  end
+
+  function /(n::Number, u::NumDerive)
+    NumDerive(n/u.f, -(n*u.d)/(u.f^2))
+  end
+
+  function ^(u::NumDerive, n::Real)
+    NumDerive(u.f^n, n*u.f^(n-1))
+  end
+
+  function Base.sin(u::NumDerive)
+    NumDerive(sin(u.f), cos(u.f)*u.d)
+  end
+
+  function Base.cos(u::NumDerive)
+    NumDerive(cos(u.f), -sin(u.f)*u.d)
+  end
+
+  function Base.exp(u::NumDerive)
+    NumDerive(exp(u.f), exp(u.f)*u.d)
+  end
+
+  function Base.log(u::NumDerive)
+    NumDerive(log(u.f), u.d/u.f)
+  end
+
+end #endmodule
 
 
-  /(u::ValorDeriv, v::ValorDeriv) = ValorDeriv(u.val/v.val, (u.der*v.val - v.der*u.val)/(v.val^2))
-  /(n::Number, u::ValorDeriv) = ValorDeriv(n/u.val, -n/(u.val^2))
-
-
-
-  sin(u::ValorDeriv) = ValorDeriv(sin(u.val), cos(u.val)*u.der)
-  cos(u::ValorDeriv) = ValorDeriv(cos(u.val), -sin(u.val)*u.der)
-
-  exp(u::ValorDeriv) = ValorDeriv(exp(u.val), e(u.val)*u.der)
-  log(u::ValorDeriv) = ValorDeriv(log(u.val), u.der/u.val)
-
-
-  #operators
-
-
-
-
-
-end
-
-x=ValorDeriv(1,0) #x_0=2
-y=ValorDeriv(2,1)
-
-x.d
-x+y
 
