@@ -60,4 +60,65 @@ y = [P_2(i) for i in x]
 plot(x,y)
 
 
+#EXTENSIÓN DE FUNCIONES A INTERVALOS
+
+x_interval=Interval(1.0,2.0)
+
+function f(x::Interval)
+    return(x/(x^2+1.0))
+end
+
+P_3(x)=x/(1+x^2)
+y_int=f(Interval(1.0,2.0))
+y1 = linspace(y_int.left, y_int.right, 50)
+
+
+x_interval = Interval(1.0,2.0)
+x = linspace(x_interval.left, x_interval.right, 50);
+y = [P_3(i) for i in x]
+
+plot(x,y1,x,y) #este es el resultado correcto
+
+
+
+#Rutina para encontrar raices
+
+
+function RaicesCreciente(x::Symbol,F::Function, x_0::Float64)
+  m_interval = Interval(0.0, x_0)
+  m = linspace(m_interval.left, m_interval.right, 50)
+  y = [F(i) for i in m]
+
+    for i in m
+      if y[i]<0 && y[i+1]>0
+                  return Interval(i, i+1.0)
+        else
+                  return("no tiene raices")
+      end
+    end
+
+end
+
+
+
+function RaicesDecreciente(F::Function, x_0::Float64)
+  m_interval = Interval(0.0, x_0)
+  m = linspace(m_interval.left, m_interval.right, 50)
+  y = [F(i) for i in m]
+
+    for i in m
+      if y[i]>0 && y[i+1]<0
+                  return Interval(i, i+1.0)
+        else
+                  return("no tiene raices")
+      end
+    end
+
+end
+
+function Raices(F::Function, x_0::Float64)
+  RaicesCreciente(F,x_0)
+  RaicesDecrecientes(F,x_0)
+
+
 
