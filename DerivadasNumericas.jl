@@ -26,6 +26,10 @@ module DerivadasNumericas
     NumDerive(u.f - n, u.d)
     end
 
+    function -(u::NumDerive)
+      NumDerive(-u.f,-u.d)
+    end
+
     function -(n::Number,u::NumDerive)
     NumDerive(n - u.f, -u.d)
     end
