@@ -60,13 +60,13 @@ module Intervalos
         Interval(r, l)
   end
 
-  function +(x::Interval, n::Real)
+  function +(x::Interval, n::Float64)
         l = Redondeo(+, RoundDown, x.left, n)
         r = Redondeo(+, RoundUp, x.right, n)
         Interval(r, l)
   end
 
-  function +(n::Real, x::Interval)
+  function +(n::Float64, x::Interval)
         l = Redondeo(+, RoundDown, x.left, n)
         r = Redondeo(+, RoundUp, x.right, n)
         Interval(r, l)
@@ -78,6 +78,18 @@ module Intervalos
   function -(x::Interval, y::Interval) #Resta de intervalos
         l = Redondeo(-, RoundDown, x.left, y.left)
         r = Redondeo(-, RoundUp, x.right, y.right)
+        Interval(r, l)
+  end
+
+  function -(x::Interval, n::Float64)
+        l = Redondeo(-, RoundDown, x.left, n)
+        r = Redondeo(-, RoundUp, x.right, n)
+        Interval(r, l)
+  end
+
+  function -(n::Float64, x::Interval)
+        l = Redondeo(-, RoundDown, x.left, n)
+        r = Redondeo(-, RoundUp, x.right, n)
         Interval(r, l)
   end
 
@@ -233,4 +245,6 @@ module Intervalos
 
 
 end
+
+
 
