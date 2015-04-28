@@ -1,10 +1,10 @@
 module Intervalos
   using Base
 
-  import Base.exp, Base.log, Base.sin, Base.cos, Base.tan
+  import Base.exp, Base.log, Base.sin, Base.cos, Base.tan, Base.length, Base.contains
   importall Base.Operators
 
-  export Interval
+  export Interval, +, -, *, /, ExtendedDivision, contains, midpoint, length, Intersection
 
 
   type Interval #DEFINICIÓN DE INTERVALO
@@ -30,7 +30,7 @@ module Intervalos
 
 
   function Redondeo(f, redondeo, x::Float64, y::Float64) #Redondea
-        with_rounding(redondeo) do
+        with_rounding(Float64,redondeo) do
             f(x, y)
         end
   end
@@ -130,12 +130,30 @@ module Intervalos
   return m/y
   end
 
-  function contains(x::Interval, n::Real)
-    if n>=x.left && x.right>=n
-      true
-    else
-      false
-    end
+  function contains(x::Interval, n::Number)
+      if x.left<=n && x.right>=n
+          true
+      else
+          false
+      end
+  end
+
+  function ExtendedDivision(x::Interval, y::Interval)
+      if contains(y,0.0)==false
+          x/y
+      else
+          if y.left==0.0 && y.right>0.0
+              return Interval(1/y.right, +Inf)
+          else
+              if y.left<0.0 && y.right>0.0
+                  return [Interval(-Inf,1/y.left), Interval(1/y.right,+Inf)]
+              else
+                  if y.right==0.0 && y.left<0.0
+                      return Interval(-Inf,1/y.left)
+                  end
+              end
+          end
+      end
   end
 
   function ^(x::Interval, n::Int64)
@@ -244,7 +262,22 @@ module Intervalos
   end
 
 
+  function midpoint(N::Interval) #PuntoMedio
+      return (N.left+N.right)/2
+  end
+
+  function length(x::Interval)
+      return x.right-x.left
+  end
+
+  function Intersection(x::Interval, y::Interval)
+      if x.right>y.left
+          return Interval(max(x.left,y.left), min(x.right, y.right))
+      else
+          false
+      end
 end
 
+end
 
 
