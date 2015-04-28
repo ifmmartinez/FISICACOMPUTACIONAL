@@ -22,13 +22,18 @@ module DerivadasNumericas
     NumDerive(u.f + n, u.d)
     end
 
+    function -(u::NumDerive, n::Number)
+    NumDerive(u.f - n, u.d)
+    end
+
+    function -(n::Number,u::NumDerive)
+    NumDerive(n - u.f, -u.d)
+    end
+
     function +(n::Number, x::NumDerive) #Para que en la suma no importe el orden
     return +(x::NumDerive, n::Number)
     end
 
-    function -(u::NumDerive, n::Number)
-    NumDerive(u.f - n, u.d)
-    end
 
     function *(u::NumDerive, v::NumDerive)
     NumDerive(u.f*v.f, u.f*v.d + u.d*v.f)
