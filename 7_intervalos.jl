@@ -8,10 +8,10 @@ module Intervalos
 
 
   type Interval #DEFINICIÓN DE INTERVALO
-        left::Float64
-        right::Float64
+        left::Real
+        right::Real
 
-        function Interval(left::Float64, right::Float64) #EN CASO DE NO ESTAR EN ORDEN, LO PONE
+        function Interval(left::Real, right::Real) #EN CASO DE NO ESTAR EN ORDEN, LO PONE
             if left > right
                 left, right = right, left
             end
@@ -29,7 +29,7 @@ module Intervalos
 
 
 
-  function Redondeo(f, redondeo, x::Float64, y::Float64) #Redondea
+  function Redondeo(f, redondeo, x::Real, y::Real) #Redondea
         with_rounding(Float64,redondeo) do
             f(x, y)
         end
@@ -60,13 +60,13 @@ module Intervalos
         Interval(r, l)
   end
 
-  function +(x::Interval, n::Float64)
+  function +(x::Interval, n::Real)
         l = Redondeo(+, RoundDown, x.left, n)
         r = Redondeo(+, RoundUp, x.right, n)
         Interval(r, l)
   end
 
-  function +(n::Float64, x::Interval)
+  function +(n::Real, x::Interval)
         l = Redondeo(+, RoundDown, x.left, n)
         r = Redondeo(+, RoundUp, x.right, n)
         Interval(r, l)
@@ -81,17 +81,20 @@ module Intervalos
         Interval(r, l)
   end
 
-  function -(x::Interval, n::Float64)
+  function -(x::Interval, n::Real)
         l = Redondeo(-, RoundDown, x.left, n)
         r = Redondeo(-, RoundUp, x.right, n)
         Interval(r, l)
   end
 
-  function -(n::Float64, x::Interval)
+  function -(n::Real, x::Interval)
         l = Redondeo(-, RoundDown, x.left, n)
         r = Redondeo(-, RoundUp, x.right, n)
         Interval(r, l)
   end
+
+
+
 
   function *(x::Interval, y::Interval) #Multiplicación de intervalos
         l = Redondeo(*, x, y, "min")
@@ -100,10 +103,17 @@ module Intervalos
   end
 
   function *(x::Interval, n::Real)
-          l = Redondeo(*, x, n, "min")
-          r = Redondeo(*, x, n, "max")
+          l = Redondeo(*, x, Interval(n,n), "min")
+          r = Redondeo(*, x, Interval(n,n), "max")
           Interval(r, l)
   end
+
+  function *(n::Real, x::Interval)
+    Interval(x, n)
+  end
+
+
+
 
   function /(x::Interval, y::Interval) #División de intervalos
         if y.left<=0 && y.right>=0
@@ -130,7 +140,7 @@ module Intervalos
   return m/y
   end
 
-  function contains(x::Interval, n::Number)
+  function contains(x::Interval, n::Real)
       if x.left<=n && x.right>=n
           true
       else
@@ -156,7 +166,7 @@ module Intervalos
       end
   end
 
-  function ^(x::Interval, n::Int64)
+  function ^(x::Interval, n::Int)
     if iseven(n)==true
       if x.left>=0.0
         Interval(x.left^n, x.right^n)
